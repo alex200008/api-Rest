@@ -18,6 +18,9 @@ app.use(morgan('dev'))
 
 app.post('/signup', signup)
 app.post('/signin', signin)
+app.post('/echo', async (req,res) => {
+  res.send(req.body)
+})
 
 app.use('/api', protect)
 app.use('/api/user', userRouter)
