@@ -16,7 +16,11 @@ export const verifyToken = token =>
     })
   })
 
-export const signup = async (req, res) => {}
+export const signup = async (req, res) => {
+  console.log(req.body)
+  UserModel.prototype.create(req.body)
+  res.send(req.body)
+}
 
 export const signin = async (req, res) => {}
 

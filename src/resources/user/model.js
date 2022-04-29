@@ -3,9 +3,13 @@ export class UserModel {
     this.users = []
   }
 
-  create(user) {}
+  create(user) {
+    this.users.push(user)
+  }
 
-  findById(id) {}
+  findById(id) {
+    return this.users.find(user => user.id === id)
+  }
 
   checkPassword(id, password) {} // hint: make use of bcrypt to match password i.e: bcrypt.compare
 
