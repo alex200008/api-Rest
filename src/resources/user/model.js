@@ -1,14 +1,14 @@
 export class UserModel {
-  constructor() {
-    this.users = []
-  }
+  static users = []
 
   create(user) {
-    this.users.push(user)
+    if (!user.id) user.id = user.email
+    UserModel.users.push(user)
+    return user
   }
 
   findById(id) {
-    return this.users.find(user => user.id === id)
+    return UserModel.users.find(user => user.id === id)
   }
 
   checkPassword(id, password) {} // hint: make use of bcrypt to match password i.e: bcrypt.compare

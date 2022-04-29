@@ -16,13 +16,51 @@ export const verifyToken = token =>
     })
   })
 
+const User = new UserModel()
 export const signup = async (req, res) => {
-  console.log(req.body)
-  UserModel.prototype.create(req.body)
-  res.send(req.body)
+  const user = req.body
+  user.id = user.email
+
+  if (!user.email || !user.password) {
+    res
+      .status(400)
+      .send({ message: 'You must signup with an email and a password' })
+    return
+  }
+
+  User.create(req.body)
+
+  const token = newToken(user)
+  res.status(201).send({ token: token })
 }
 
-export const signin = async (req, res) => {}
+export const signin = async (req, res) => {
+  let user = req.body
+  user.id = user.email
+
+  if (!user.email || !user.password) {
+    res
+      .status(400)
+      .send({ message: 'You must signin with an email and a password' })
+    return
+  }
+
+  const password = user.password
+
+  user = User.findById(user.id)
+
+  if (!user) {
+    res.status(401).send({ message: 'You must signup' })
+    return
+  }
+
+  if (password !== user.password) {
+    res.status(401).send({ message: 'Bad password' })
+    return
+  }
+
+  res.status(201).send({ token: newToken(user) })
+}
 
 export const protect = async (req, res, next) => {
   next()
