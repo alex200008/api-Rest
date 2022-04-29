@@ -27,6 +27,10 @@ export const signup = async (req, res) => {
       .send({ message: 'You must signup with an email and a password' })
     return
   }
+  if (User.findById(user.id)) {
+    res.status(400).send({ message: 'Already signup' })
+    return
+  }
 
   User.create(req.body)
 
@@ -46,15 +50,14 @@ export const signin = async (req, res) => {
   }
 
   const password = user.password
-
-  user = User.findById(user.id)
+  user = await User.findById(user.id)
 
   if (!user) {
     res.status(401).send({ message: 'You must signup' })
     return
   }
 
-  if (password !== user.password) {
+  if (!User.checkPassword(user.id, password)) {
     res.status(401).send({ message: 'Bad password' })
     return
   }
@@ -63,5 +66,24 @@ export const signin = async (req, res) => {
 }
 
 export const protect = async (req, res, next) => {
+  if (!req.headers.authorization) {
+    res.status(401).end()
+    return
+  }
+
+  const token = req.headers.authorization.split('Bearer ')[1]
+  if (!token) {
+    res.status(401).end()
+    return
+  }
+
+  let user = await verifyToken(token)
+  user = User.findById(user.id)
+  if (!user) {
+    res.status(401).end()
+    return
+  }
+  req.user = { id: user.id }
+
   next()
 }
